@@ -157,6 +157,10 @@ db.collectionName.find({age:{$nin:[5, 11, 12]}})
 - `db.collectionName.find({skills:{$in:['html', 'css']}})` - find from skills array that have skills html or css.
 - 
 
+### Element Query Operator
+
+-`$exists` - 
+
 
 ### Aggregation
 
@@ -296,3 +300,66 @@ db.runCommand({
 ### Atomicity in mongodb
 
 - if the insertion is taking place then if the 10 documents are there 5 have been inserted and 5 are left, then its ok 5 will be inserted and will not rollback this means if insertion was taking place then that document will not be inserted because atomicity is achieved at document level.
+
+### $exists and $type operator
+
+- `db.collectionName.find({hasMacbook : {$exists: true, $type: 8}})`
+
+Double                    1 "double"
+String                    2 "string"
+Object                    3 "object"
+Array                     4 "array"
+Binary data               5 "binData" 
+Objectld                  7 "objectld"
+Boolean                   8 "bool"
+Date                      9 "date"
+Null                      10 "null"
+Regular Expression        11 "regex"
+
+
+### Evaluation Query Operators
+
+- `$expr` - Allows use of aggregation expressions within the query language.
+```
+db.collectionName.find({
+    $expr:{
+        $gt:["$field1", "$field2"]
+    }
+})
+
+This will find all the documents in the collection where the value of field 1 is greater than value of field 2.
+```
+
+- `$jsonSchema` - Validate documents against the given JSON Schema.
+- `$mod `- Performs a modulo operation on the value of a field and selects documents with a specified result.
+```
+
+db.collectionName.find({age: {$mod:[2,0]}})
+even age people which when divided by 2 gives 0 remainder
+```
+
+- `$regex` - Selects documents where values match a specified regular expression.
+- `$text` - Performs text search. To use the $text operator, you create a text index on field(s) yom want to search. text index allows Mongo db search for that specific words and phrases in indexed fields and returns documents that match the search criteria.
+- `$where` - Matches documents that satisfy a JavaScript expression.
+
+
+
+### Array Query Operator
+
+- `db.products.find({products: {$elemMatch:{ quantity: { $gt:ll } , name: "apple" }}})`
+
+### Advanced Update
+
+- `db.collectionName.update({}, {$inc:{age:1}})` - increase age of all students by 1
+- `db.collectionName.updateOne({name:"sita"}, {$max:{age:50}})` - increase age of sita only if it is less than 50.
+- `db.collectionName.updateOne({name:"sita"}, {$min:{age:23}})` - decrease to 23 only if more than 23.
+- `db.collectionName.updateOne({name:'sita'}, {$mul:{age:2}})` - multiply age of sita by 2.
+- `db.collectionName.updateOne({name:'sita'}, {$unset:{age:anynumber}})` - age field will be deleted.
+- `db.collectionName.updateOne({name:'sita'}, {$rename:{age:"student_age"}})` - changing the column name.
+- `db.collectionName.updateOne({name:'Golu'}, {$set:{age:100}}, {upsert:true})` - if the golu is not found then make one.
+
+
+### Update nested Arrays
+
+- `db.collectionName.updateMany({experience: {$elemMatch:{duration:{$lte:1}}}}, {$set:{"experience.$.neglect":true}})` - first match will be updated
+- `db.collectionName.updateMany({experience: {$elemMatch:{duration:{$lte:1}}}}, {$set:{"experience.$[].neglect":true}})` - all match will be updated
