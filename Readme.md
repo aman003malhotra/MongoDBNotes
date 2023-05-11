@@ -171,7 +171,35 @@ db.collectionName.find({age:{$nin:[5, 11, 12]}})
 - `$match` - db.collenctionName.aggregate([{$match:{country:'Spain', city:'Salamanca'}}]) - match the key value pair as mentioned.
 - `$project` - db.collectionName.aggregate([ { $project:{_id:0, country:1, city:1, name:1} }])  - when we want specific fields in the document to be printed.
 - `$group` - db.collectionName.aggregate([ {$group: {_id:'$name', totaldocs:{$sum:1} } } ]) - group by the name and give the number of totaldocs for each name.
- 
+```
+db.teachers.aggregate([{$group:{ _id: "$age", students: { $push:"$$ROOT" }}}])
+The $$ROOT value is a reference to the current document being processed in the pipeline, which represents the complete document.
+
+db.teachers.aggregate([{$match:{gender:"male"}}, {$group:{_id:"$age", number:{$sum:1}}}]) 
+The value of $sum is 1, which means that for each document in the group, the value of
+"number" will be incremented by 1.
+
+db.students.aggregate([{$match:{gender:"male"}}, {$group:{_id:"$age", count:{$sum:1}}, {$sort:count:-1}}])
+db.student.aggregate([{$unwind:"$Hobbies"},{$group:{_id:"$age", hobbies:{$push:"$Hobbies"}}}])
+Find Hobbies per age group
+
+db.teacher.aggregate([{$group:{_id:null, averageAge:{$age:"$age"}}}])
+Find average age of all students
+
+db.students.aggregate([{$unwind:"$Hobbies"}, {$group:{_id:null, count:{$sum:1}}}])
+Find the total number of hobbies for all the students in a collection
+
+{ $ifNull: [ <expression>, <repIacementExpression> ] } used if some field is not there
+
+input: Specifies the array expression to filter.
+as: Specifies a variable name that can be used inside the
+cond expression to reference the current element of the
+input array.
+cond: Specifies the condition that must be met in order for
+an element to be included in the result set. The expression
+must return either true or false.
+
+```
 
 - `$count` - Calculates the quantity of documents in the given group.
 - `$max` - Displays the maximum value of a document's field in the collection.
@@ -185,6 +213,11 @@ db.collectionName.find({age:{$nin:[5, 11, 12]}})
 - `$sort` - db.collectionName.aggregate([$sort: {'students.number':-1}]) - -1 will means descending order and 1 will be asending order.
 - `$limit` - db.collectionName.aggregate([{$limit: 2}]) - it will only show first 2 results.
 - `$skip` - db.collectionName.aggregate([{$skip : 1}]) - skip 1 value.
+
+
+
+
+
 
 ### What are Indexes
 - Indexes support the efficient execution of queries in MongoDB. Without indexes, MongoDB must perform a collection scan
@@ -362,4 +395,8 @@ even age people which when divided by 2 gives 0 remainder
 ### Update nested Arrays
 
 - `db.collectionName.updateMany({experience: {$elemMatch:{duration:{$lte:1}}}}, {$set:{"experience.$.neglect":true}})` - first match will be updated
-- `db.collectionName.updateMany({experience: {$elemMatch:{duration:{$lte:1}}}}, {$set:{"experience.$[].neglect":true}})` - all match will be updated
+- `db.collectionName.updateMany({experience: {$elemMatch:{duration:{$lte:1}}}}, {$set:{"experience.$[].neglect":true}}, {arrayFilters:[{"e.duration":{$lte:1}}]})` - all match will be updated
+- `db.students.updateOne({name:"Ram"}, {$push:{experience:{compane:"Meta", duration:2}}})` - add new document to the experience array.
+- `db.students.updateOne({name:"Ram"}, {$addToSet:{experience:{compane:"Meta", duration:2}}})` - add new document to the experience array.
+- `db.collectionName.updateOne({name:"Ram"}, {$pop:{experience:1}})` - pop one element from the last.
+- `db.collectionName.updateOne({name:"Ram"}, {$pull:{experience:{compane:"Meta", duration:2}}})` - delete the element matching.
