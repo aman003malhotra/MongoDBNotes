@@ -1,6 +1,6 @@
 # MongoDB Notes
 
-## COllections
+## Collections
 - Collection is a group of MongoDB documents.It is the equivalent of an RDBMS table. A collection exists within a single database.Collections do not enforce a schema. Documents within a collection can have different fields. Typically, all documents in a collection are of similar or related purpose.
 
 ## Database is a physical container for collections.
@@ -147,15 +147,15 @@ db.collectionName.find({age:{$ne:5}})
 db.collectionName.find({age:{$in:[5, 11, 12]}})
 ```
 - `$nin` - Not in
+```
 db.collectionName.find({age:{$nin:[5, 11, 12]}})
-
+```
 
 
 ### Sample queries
 
 - `db.pesto.find({age:{$eq : 23}}, {name:1, _id:0})` - find from the collection pesto where age is equal to 23 and don't show _id and show name.
 - `db.collectionName.find({skills:{$in:['html', 'css']}})` - find from skills array that have skills html or css.
-- 
 
 ### Element Query Operator
 
@@ -183,7 +183,7 @@ db.students.aggregate([{$match:{gender:"male"}}, {$group:{_id:"$age", count:{$su
 db.student.aggregate([{$unwind:"$Hobbies"},{$group:{_id:"$age", hobbies:{$push:"$Hobbies"}}}])
 Find Hobbies per age group
 
-db.teacher.aggregate([{$group:{_id:null, averageAge:{$age:"$age"}}}])
+db.teacher.aggregate([{$group:{_id:null, averageAge:{$avg:"$age"}}}])
 Find average age of all students
 
 db.students.aggregate([{$unwind:"$Hobbies"}, {$group:{_id:null, count:{$sum:1}}}])
@@ -203,7 +203,7 @@ must return either true or false.
 
 - `$count` - Calculates the quantity of documents in the given group.
 - `$max` - Displays the maximum value of a document's field in the collection.
-- `$min` - Displays the minimum value ofa document's field in the collection.
+- `$min` - Displays the minimum value of a document's field in the collection.
 - `$avg` - Displays the average value of a document's field in the collection.
 - `$sum` - Sums up the specified values of all documents in the collection.
 - `$push` - Adds extra values into the array of the resulting document.
@@ -338,16 +338,16 @@ db.runCommand({
 
 - `db.collectionName.find({hasMacbook : {$exists: true, $type: 8}})`
 
-Double                    1 "double"
-String                    2 "string"
-Object                    3 "object"
-Array                     4 "array"
-Binary data               5 "binData" 
-Objectld                  7 "objectld"
-Boolean                   8 "bool"
-Date                      9 "date"
-Null                      10 "null"
-Regular Expression        11 "regex"
+- Double                    1 "double"
+- String                    2 "string"
+- Object                    3 "object"
+- Array                     4 "array"
+- Binary data               5 "binData" 
+- Objectld                  7 "objectld"
+- Boolean                   8 "bool"
+- Date                      9 "date"
+- Null                      10 "null"
+- Regular Expression        11 "regex"
 
 
 ### Evaluation Query Operators
